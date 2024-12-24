@@ -22,6 +22,13 @@
 #include <semaphore.h>
 #include <assert.h>
 #define OS_THREAD_HAVE_SETNAME
+#elif defined(XRT_OS_DARWIN)
+#include <pthread.h>
+#include <dispatch/dispatch.h>
+#include <assert.h>
+// TODO: Darwin does not supporting to set thread name from another thread
+//       probably we could add some workarounds for it, but it should be needed for first time
+//#define OS_THREAD_HAVE_SETNAME
 #elif defined(XRT_OS_WINDOWS)
 #include <pthread.h>
 #include <sched.h>
@@ -352,7 +359,11 @@ os_thread_name(struct os_thread *ost, const char *name)
  */
 struct os_semaphore
 {
+#if defined(XRT_OS_DARWIN)
+	dispatch_semaphore_t dispatch_semaphore;
+#else
 	sem_t sem;
+#endif
 };
 
 /*!
@@ -363,7 +374,12 @@ struct os_semaphore
 static inline int
 os_semaphore_init(struct os_semaphore *os, int count)
 {
+#if defined(XRT_OS_DARWIN)
+	os->dispatch_semaphore = dispatch_semaphore_create(count);
+	return os->dispatch_semaphore == NULL ? -1 : 0;
+#else
 	return sem_init(&os->sem, 0, count);
+#endif
 }
 
 /*!
@@ -374,7 +390,11 @@ os_semaphore_init(struct os_semaphore *os, int count)
 static inline void
 os_semaphore_release(struct os_semaphore *os)
 {
+#if defined(XRT_OS_DARWIN)
+	dispatch_semaphore_signal(os->dispatch_semaphore);
+#else
 	sem_post(&os->sem);
+#endif
 }
 
 /*!
@@ -415,16 +435,24 @@ static inline void
 os_semaphore_wait(struct os_semaphore *os, uint64_t timeout_ns)
 {
 	if (timeout_ns == 0) {
+#if defined(XRT_OS_DARWIN)
+		dispatch_semaphore_wait(os->dispatch_semaphore, DISPATCH_TIME_FOREVER);
+#else
 		sem_wait(&os->sem);
+#endif
 		return;
 	}
-
+	
+#if defined(XRT_OS_DARWIN)
+	dispatch_semaphore_wait(os->dispatch_semaphore, dispatch_time(DISPATCH_TIME_NOW, timeout_ns));
+#else
 	struct timespec abs_timeout;
 	if (os_semaphore_get_realtime_clock(&abs_timeout, timeout_ns) == -1) {
 		assert(false);
 	}
 
 	sem_timedwait(&os->sem, &abs_timeout);
+#endif
 }
 
 /*!
@@ -435,7 +463,11 @@ os_semaphore_wait(struct os_semaphore *os, uint64_t timeout_ns)
 static inline void
 os_semaphore_destroy(struct os_semaphore *os)
 {
+#if defined(XRT_OS_DARWIN)
+	dispatch_release(os->dispatch_semaphore);
+#else
 	sem_destroy(&os->sem);
+#endif
 }
 
 
