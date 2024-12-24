@@ -18,7 +18,7 @@
 
 #include <stdbool.h>
 
-#if defined(XRT_OS_LINUX) || defined(XRT_OS_WINDOWS)
+#if defined(XRT_OS_LINUX) || defined(XRT_OS_WINDOWS) || defined(XRT_OS_DARWIN)
 #include <pthread.h>
 #include <assert.h>
 #else

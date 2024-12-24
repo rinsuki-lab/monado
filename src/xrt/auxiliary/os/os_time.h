@@ -22,7 +22,7 @@
 
 #include "util/u_time.h"
 
-#ifdef XRT_OS_LINUX
+#if defined(XRT_OS_LINUX) || defined(XRT_OS_DARWIN)
 #include <time.h>
 #include <sys/time.h>
 #define XRT_HAVE_TIMESPEC
@@ -308,7 +308,7 @@ os_ns_per_qpc_tick_get(void)
 static inline int64_t
 os_monotonic_get_ns(void)
 {
-#if defined(XRT_OS_LINUX)
+#if defined(XRT_OS_LINUX) || defined(XRT_OS_DARWIN)
 	struct timespec ts;
 	int ret = clock_gettime(CLOCK_MONOTONIC, &ts);
 	if (ret != 0) {
