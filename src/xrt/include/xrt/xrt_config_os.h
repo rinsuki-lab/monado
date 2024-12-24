@@ -42,6 +42,20 @@
 #define XRT_ENV_MINGW
 #endif
 
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#define XRT_OS_DARWIN
+#define XRT_OS_UNIX
+
+#if TARGET_OS_OSX // TARGET_OS_MAC contains another platforms, e.g. iOS
+#define XRT_OS_MACOS
+#define XRT_OS_WAS_AUTODETECTED
+#else
+#error "Unknown Apple OS"
+#endif
+
+#endif
+
 #ifndef XRT_OS_WAS_AUTODETECTED
 #error "OS type not found during compile"
 #endif
