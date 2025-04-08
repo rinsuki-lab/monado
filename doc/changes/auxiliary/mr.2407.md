@@ -1,1 +1,1 @@
-a/android: add ahardwarebuffer_is_supported function for format checking
+Android: Add `ahardwarebuffer_is_supported` function for format checking.

@@ -1,4 +1,4 @@
 ---
 - mr.2327
 ---
-Fix: Conformance issue.
+OpenXR Fix: Conformance issue.
