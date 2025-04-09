@@ -19,6 +19,8 @@
 
 #if defined(XRT_OS_WINDOWS) && !defined(XRT_ENV_MINGW)
 #define PATH_MAX MAX_PATH
+#elif defined(XRT_OS_DARWIN)
+#include <sys/syslimits.h>
 #endif
 
 #ifdef XRT_OS_LINUX

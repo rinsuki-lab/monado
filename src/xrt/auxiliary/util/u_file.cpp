@@ -28,6 +28,14 @@ namespace fs = std::filesystem;
 namespace fs = std::experimental::filesystem;
 #endif
 
+#ifdef XRT_OS_DARWIN
+static inline errno_t fopen_s(FILE **file, const char *filename, const char *mode)
+{
+	*file = fopen(filename, mode);
+	return *file == NULL ? errno : 0;
+}
+#endif
+
 static inline fs::path
 get_config_path()
 {
