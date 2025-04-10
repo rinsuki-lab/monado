@@ -1211,6 +1211,11 @@ p_open_hid_interface(struct xrt_prober *xp,
 	(void)ret;
 	U_LOG_E("HID devices not yet supported on Windows, cannot open interface (%i)", interface);
 	return -1;
+#elif defined(XRT_OS_DARWIN)
+	(void)ret;
+	// TODO: support?
+	U_LOG_E("HID devices not yet supported on Darwin, cannot open interface (%i)", interface);
+	return -1;
 #else
 #error "no port of hid code"
 #endif
