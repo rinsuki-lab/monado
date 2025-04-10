@@ -68,6 +68,24 @@ ref_graphics_handle(xrt_graphics_buffer_handle_t handle)
 	return NULL;
 }
 
+#elif defined(XRT_GRAPHICS_BUFFER_HANDLE_IS_IOSURFACE)
+#include <IOSurface/IOSurfaceRef.h>
+
+static inline void
+release_graphics_handle(xrt_graphics_buffer_handle_t handle)
+{
+	IOSurfaceDecrementUseCount(handle);
+	CFRelease(handle);
+}
+
+static inline xrt_graphics_buffer_handle_t
+ref_graphics_handle(xrt_graphics_buffer_handle_t handle)
+{
+	IOSurfaceIncrementUseCount(handle);
+	CFRetain(handle);
+	return handle;
+}
+
 #else
 #error "need port"
 #endif
