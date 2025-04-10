@@ -292,6 +292,11 @@ vk_get_device_functions(struct vk_bundle *vk)
 
 #endif // !defined(VK_USE_PLATFORM_WIN32_KHR)
 
+#if defined(VK_USE_PLATFORM_METAL_EXT)
+	vk->vkExportMetalObjectsEXT                     = GET_DEV_PROC(vk, vkExportMetalObjectsEXT);
+
+#endif // defined(VK_USE_PLATFORM_METAL_EXT)
+
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
 	vk->vkGetMemoryAndroidHardwareBufferANDROID     = GET_DEV_PROC(vk, vkGetMemoryAndroidHardwareBufferANDROID);
 	vk->vkGetAndroidHardwareBufferPropertiesANDROID = GET_DEV_PROC(vk, vkGetAndroidHardwareBufferPropertiesANDROID);

@@ -218,6 +218,7 @@ vk_fill_in_has_instance_extensions(struct vk_bundle *vk, struct u_string_list *e
 			continue;
 		}
 #endif // defined(VK_EXT_debug_utils)
+
 	}
 	// end of GENERATED instance extension code - do not modify - used by scripts
 }
@@ -898,6 +899,7 @@ fill_in_has_device_extensions(struct vk_bundle *vk, struct u_string_list *ext_li
 			continue;
 		}
 #endif // defined(VK_GOOGLE_display_timing)
+
 	}
 	// end of GENERATED device extension code - do not modify - used by scripts
 }

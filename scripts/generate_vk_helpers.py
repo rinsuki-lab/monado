@@ -156,6 +156,8 @@ def get_device_cmds():
         Cmd("vkImportFenceFdKHR", requires=("!defined(VK_USE_PLATFORM_WIN32_KHR)",)),
         Cmd("vkImportSemaphoreFdKHR", requires=("!defined(VK_USE_PLATFORM_WIN32_KHR)",)),
         None,
+        Cmd("vkExportMetalObjectsEXT", requires=("VK_USE_PLATFORM_METAL_EXT",)),
+        None,
         Cmd(
             "vkGetMemoryAndroidHardwareBufferANDROID",
             requires=("VK_USE_PLATFORM_ANDROID_KHR",),

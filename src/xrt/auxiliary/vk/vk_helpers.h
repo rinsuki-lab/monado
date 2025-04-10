@@ -410,6 +410,11 @@ struct vk_bundle
 
 #endif // !defined(VK_USE_PLATFORM_WIN32_KHR)
 
+#if defined(VK_USE_PLATFORM_METAL_EXT)
+	PFN_vkExportMetalObjectsEXT vkExportMetalObjectsEXT;
+
+#endif // defined(VK_USE_PLATFORM_METAL_EXT)
+
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
 	PFN_vkGetMemoryAndroidHardwareBufferANDROID vkGetMemoryAndroidHardwareBufferANDROID;
 	PFN_vkGetAndroidHardwareBufferPropertiesANDROID vkGetAndroidHardwareBufferPropertiesANDROID;
