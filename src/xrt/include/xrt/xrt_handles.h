@@ -326,6 +326,55 @@ xrt_graphics_buffer_is_valid(xrt_graphics_buffer_handle_t handle)
  * @relates xrt_graphics_buffer_handle_t
  */
 #define XRT_GRAPHICS_BUFFER_HANDLE_INVALID (NULL)
+
+#elif defined(XRT_OS_DARWIN)
+#include <IOSurface/IOSurfaceRef.h>
+
+/*!
+ * The type underlying buffers shared between compositor clients and the main
+ * compositor.
+ *
+ * On Apple platforms, this is a MTLTexture.
+ */
+typedef IOSurfaceRef xrt_graphics_buffer_handle_t;
+
+/*!
+ * Defined to allow detection of the underlying type.
+ *
+ * @relates xrt_graphics_buffer_handle_t
+ */
+#define XRT_GRAPHICS_BUFFER_HANDLE_IS_IOSURFACE 1
+
+/*!
+ * Defined to indicate that the graphics buffer is consumed by the import into Vulkan
+ *
+ * @relates xrt_graphics_buffer_handle_t
+ * @see XRT_GRAPHICS_BUFFER_HANDLE_REFERENCE_ADDED_BY_VULKAN_IMPORT
+ */
+#define XRT_GRAPHICS_BUFFER_HANDLE_CONSUMED_BY_VULKAN_IMPORT 1
+
+/*!
+ * Check whether a graphics buffer handle is valid.
+ *
+ * @public @memberof xrt_graphics_buffer_handle_t
+ */
+static inline bool
+xrt_graphics_buffer_is_valid(xrt_graphics_buffer_handle_t handle)
+{
+	return handle != NULL;
+}
+
+/*!
+ * An invalid value for a graphics buffer.
+ *
+ * Note that there may be more than one value that's invalid - use
+ * xrt_graphics_buffer_is_valid() instead of comparing against this!
+ *
+ * @relates xrt_graphics_buffer_handle_t
+ */
+#define XRT_GRAPHICS_BUFFER_HANDLE_INVALID (NULL)
+
+
 #else
 #error "Not yet implemented for this platform"
 #endif
