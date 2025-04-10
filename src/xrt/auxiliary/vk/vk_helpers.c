@@ -247,7 +247,7 @@ vk_object_type_string(VkObjectType type)
 #ifdef VK_NV_device_generated_commands
 		ENUM_TO_STR(VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NV);
 #endif
-#ifdef VK_NV_cuda_kernel_launch
+#if defined(VK_NV_cuda_kernel_launch) && defined(VK_ENABLE_BETA_EXTENSIONS)
 		ENUM_TO_STR(VK_OBJECT_TYPE_CUDA_MODULE_NV);
 		ENUM_TO_STR(VK_OBJECT_TYPE_CUDA_FUNCTION_NV);
 #endif
