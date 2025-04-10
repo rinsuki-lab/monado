@@ -102,6 +102,9 @@ ogl_import_from_native(struct xrt_image_native *natives,
 	// Function is disabled for AHardwareBuffer, glImportMemoryFdEXT requires an actual FD and requires more work
 	// to handle AHardwareBuffer.
 	return false;
+#elif defined(XRT_GRAPHICS_BUFFER_HANDLE_IS_IOSURFACE)
+	// TODO
+	return false;
 #else
 	// Setup fields.
 	results->width = info->width;
