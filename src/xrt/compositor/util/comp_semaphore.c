@@ -11,6 +11,11 @@
 
 #include "util/comp_semaphore.h"
 
+#if defined(XRT_OS_DARWIN)
+// since Mach already have a "semaphore_wait" and "semaphore_destroy" functions, we need to rename our names in Darwin
+#define semaphore_wait our_semaphore_wait
+#define semaphore_destroy our_semaphore_destroy
+#endif
 
 /*
  *
