@@ -251,7 +251,7 @@ option(XRT_MODULE_COMPOSITOR "Enable the compositor at all" ON)
 option_with_deps(XRT_MODULE_COMPOSITOR_MAIN "Build main compositor host functionality" DEPENDS
 	XRT_MODULE_COMPOSITOR
 	XRT_HAVE_VULKAN
-	"XRT_HAVE_WAYLAND OR XRT_HAVE_XCB OR ANDROID OR WIN32"
+	"XRT_HAVE_WAYLAND OR XRT_HAVE_XCB OR ANDROID OR WIN32 OR APPLE"
 	)
 option_with_deps(XRT_MODULE_COMPOSITOR_NULL "Build testing null compositor" DEPENDS XRT_MODULE_COMPOSITOR XRT_HAVE_VULKAN)
 option_with_deps(XRT_MODULE_MERCURY_HANDTRACKING "Enable Mercury hand tracking" DEPENDS XRT_HAVE_OPENCV XRT_HAVE_ONNXRUNTIME)
@@ -474,6 +474,7 @@ if(XRT_HAVE_SDL2)
 		target_include_directories(SDL2::SDL2 SYSTEM INTERFACE "${SDL2_INCLUDE_DIRS}")
 		target_link_libraries(SDL2::SDL2 INTERFACE "${SDL2_LIBRARIES}")
 	endif()
+	target_include_directories(SDL2::SDL2 SYSTEM INTERFACE "${SDL2_INCLUDE_DIRS}")
 endif()
 
 # Vulkan flags for the shared Vulkan code.
