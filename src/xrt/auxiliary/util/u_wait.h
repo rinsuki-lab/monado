@@ -17,14 +17,14 @@
 /*!
  * OS specific tweak to wait time.
  *
- * @todo Measure on Windows.
+ * @todo Measure on Windows and macOS.
  * @ingroup aux_util
  */
 #define U_WAIT_MEASURED_SCHEDULER_LATENCY_NS (uint64_t)(0)
 
 #elif defined(XRT_OS_LINUX) || defined(XRT_OS_ANDROID)
 #define U_WAIT_MEASURED_SCHEDULER_LATENCY_NS (uint64_t)(50 * 1000)
-#elif defined(XRT_OS_WINDOWS)
+#elif defined(XRT_OS_WINDOWS) || defined(XRT_OS_DARWIN)
 #define U_WAIT_MEASURED_SCHEDULER_LATENCY_NS (uint64_t)(0)
 #else
 #error "Unsupported platform!"
