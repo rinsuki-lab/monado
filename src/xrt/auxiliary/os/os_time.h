@@ -155,9 +155,9 @@ static inline int64_t
 os_timeval_to_ns(struct timeval *val);
 #endif
 
-#if defined(XRT_OS_LINUX) || defined(XRT_DOXYGEN)
+#if defined(XRT_OS_LINUX) || defined(XRT_OS_DARWIN) || defined(XRT_DOXYGEN)
 /*!
- * Return a realtime clock in nanoseconds (Linux-only)
+ * Return a realtime clock in nanoseconds (Linux and/or Darwin only)
  *
  * @ingroup aux_os_time_extra
  */
@@ -325,7 +325,7 @@ os_monotonic_get_ns(void)
 #endif
 }
 
-#ifdef XRT_OS_LINUX
+#if defined(XRT_OS_LINUX) || defined(XRT_OS_DARWIN)
 static inline int64_t
 os_realtime_get_ns(void)
 {
