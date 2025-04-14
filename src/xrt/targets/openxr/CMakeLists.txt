@@ -43,7 +43,17 @@ if(APPLE)
 	)
 endif()
 
-if(NOT WIN32)
+if(APPLE)
+	# macOS linker wants to have a _ prefix for symbol
+	# and it doesn't support --version-script
+    set_property(
+        TARGET ${RUNTIME_TARGET}
+        APPEND_STRING
+        PROPERTY
+            LINK_FLAGS
+            "-u _xrNegotiateLoaderRuntimeInterface"
+        )
+elseif(NOT WIN32)
 	# Force the main "negotiate" symbol's inclusion
 	# and use a version script to ensure that's the only one we expose.
 	set_property(
