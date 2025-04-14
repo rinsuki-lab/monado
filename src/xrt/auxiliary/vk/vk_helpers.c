@@ -1130,11 +1130,19 @@ vk_create_image_from_native(struct vk_bundle *vk,
 		image_create_flags |= VK_IMAGE_CREATE_PROTECTED_BIT;
 	}
 
+#if defined(XRT_GRAPHICS_BUFFER_HANDLE_IS_IOSURFACE)
+	VkImportMetalIOSurfaceInfoEXT external_memory_image_create_info = {
+	    .sType = VK_STRUCTURE_TYPE_IMPORT_METAL_IO_SURFACE_INFO_EXT,
+	    .pNext = NULL,
+	    .ioSurface = image_native->handle,
+	};
+#else
 	// In->pNext
 	VkExternalMemoryImageCreateInfoKHR external_memory_image_create_info = {
 	    .sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_KHR,
 	    .handleTypes = handle_type,
 	};
+#endif
 
 #ifdef VK_KHR_image_format_list
 	VkImageFormatListCreateInfoKHR image_format_list_create_info = {
@@ -1174,7 +1182,7 @@ vk_create_image_from_native(struct vk_bundle *vk,
 		// Nothing to cleanup
 		return ret;
 	}
-
+#if !defined(XRT_GRAPHICS_BUFFER_HANDLE_IS_IOSURFACE) // If it is the IOSurface, already imported in above.
 	VkMemoryRequirements requirements = {0};
 	vk->vkGetImageMemoryRequirements(vk->device, image, &requirements);
 
@@ -1263,7 +1271,7 @@ vk_create_image_from_native(struct vk_bundle *vk,
 	    &dedicated_memory_info,           // pNext_for_allocate
 	    __func__,                         // caller_name
 	    out_mem);                         // out_mem
-
+#endif // !defined(XRT_GRAPHICS_BUFFER_HANDLE_IS_IOSURFACE)
 #if defined(XRT_GRAPHICS_BUFFER_HANDLE_CONSUMED_BY_VULKAN_IMPORT)
 	// We have consumed this fd now, make sure it's not freed again.
 	image_native->handle = XRT_GRAPHICS_BUFFER_HANDLE_INVALID;
@@ -1282,6 +1290,34 @@ vk_create_image_from_native(struct vk_bundle *vk,
 	*out_image = image;
 	return ret;
 }
+
+#if defined(XRT_GRAPHICS_BUFFER_HANDLE_IS_IOSURFACE)
+
+XRT_CHECK_RESULT VkResult
+vk_get_native_handle_from_image(struct vk_bundle *vk,
+					VkImage image,
+					xrt_graphics_buffer_handle_t *out_handle)
+{
+	VkExportMetalIOSurfaceInfoEXT export_iosurface_info = {
+	    .sType = VK_STRUCTURE_TYPE_EXPORT_METAL_IO_SURFACE_INFO_EXT,
+	    .pNext = NULL,
+	    .image = image,
+	    .ioSurface = NULL,
+	};
+	
+	VkExportMetalObjectsInfoEXT export_info = {
+	    .sType = VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECTS_INFO_EXT,
+	    .pNext = &export_iosurface_info,
+	};
+	
+	vk->vkExportMetalObjectsEXT(vk->device, &export_info);
+	
+	*out_handle = export_iosurface_info.ioSurface;
+	
+	return xrt_graphics_buffer_is_valid(*out_handle) ? VK_SUCCESS : VK_ERROR_UNKNOWN;
+}
+
+#else
 
 #if defined(XRT_GRAPHICS_BUFFER_HANDLE_IS_FD)
 
@@ -1365,6 +1401,8 @@ vk_get_native_handle_from_device_memory(struct vk_bundle *vk,
 {
 	return get_device_memory_handle(vk, device_memory, out_handle);
 }
+
+#endif
 
 VkResult
 vk_create_sampler(struct vk_bundle *vk, VkSamplerAddressMode clamp_mode, VkSampler *out_sampler)

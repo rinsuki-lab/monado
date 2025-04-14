@@ -519,7 +519,11 @@ vk_ic_get_handles(struct vk_bundle *vk,
 
 	size_t i = 0;
 	for (; i < vkic->image_count && i < max_handles; i++) {
+#if defined(XRT_GRAPHICS_BUFFER_HANDLE_IS_IOSURFACE)
+		ret = vk_get_native_handle_from_image(vk, vkic->images[i].handle, &out_handles[i]);
+#else
 		ret = vk_get_native_handle_from_device_memory(vk, vkic->images[i].memory, &out_handles[i]);
+#endif
 		if (ret != VK_SUCCESS) {
 			break;
 		}

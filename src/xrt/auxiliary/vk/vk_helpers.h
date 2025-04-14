@@ -1142,6 +1142,25 @@ vk_create_image_from_native(struct vk_bundle *vk,
                             VkImage *out_image,
                             VkDeviceMemory *out_mem);
 
+#if defined(XRT_GRAPHICS_BUFFER_HANDLE_IS_IOSURFACE)
+/*!
+ * Given a Image handle created to be exportable, outputs the native buffer type (IOSurfaceRef on macOS)
+ * equivalent.
+ *
+ * Caller assumes ownership of handle which should be unreferenced with @ref u_graphics_buffer_unref when no longer
+ * needed.
+ *
+ * @param vk Vulkan bundle
+ * @param image The image to get the handle of
+ * @param[out] out_handle A pointer to the handle to populate
+ *
+ * @ingroup aux_vk
+ */
+XRT_CHECK_RESULT VkResult
+vk_get_native_handle_from_image(struct vk_bundle *vk,
+					VkImage device_memory,
+					xrt_graphics_buffer_handle_t *out_handle);
+#else
 /*!
  * Given a DeviceMemory handle created to be exportable, outputs the native buffer type (FD on desktop Linux)
  * equivalent.
@@ -1159,6 +1178,7 @@ XRT_CHECK_RESULT VkResult
 vk_get_native_handle_from_device_memory(struct vk_bundle *vk,
                                         VkDeviceMemory device_memory,
                                         xrt_graphics_buffer_handle_t *out_handle);
+#endif
 
 /*!
  * @ingroup aux_vk
