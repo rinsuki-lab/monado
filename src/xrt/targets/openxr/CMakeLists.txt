@@ -34,6 +34,15 @@ else()
 		)
 endif()
 
+if(APPLE)
+	target_link_libraries(
+		${RUNTIME_TARGET}
+		PUBLIC
+		"$<LINK_LIBRARY:FRAMEWORK,CoreFoundation>"
+		"$<LINK_LIBRARY:FRAMEWORK,IOSurface>"
+	)
+endif()
+
 if(NOT WIN32)
 	# Force the main "negotiate" symbol's inclusion
 	# and use a version script to ensure that's the only one we expose.
