@@ -16,16 +16,22 @@ jobs:
     runs-on: macos-26${{ matrix.image_suffix }}
     steps:
     - uses: actions/checkout@v6
+      with:
+        submodules: true
     - run: brew install eigen@3 pkg-config cmake vulkan-loader glslang && brew link --force eigen@3
-    - run: cmake -B build -DXRT_FEATURE_SERVICE=OFF -DXRT_MODULE_IPC=OFF .
+    - run: cmake -B build -GXcode -DXRT_FEATURE_SERVICE=OFF -DXRT_MODULE_IPC=OFF .
     - run: cmake --build build
     - run: |
         mkdir -p dest
-        python3 .github/utils/change_load_path.py build/src/xrt/targets/openxr/libopenxr_monado.dylib dest/
+        cp -R {build/src/external/Debug,dest}/xrt-external-syphon.framework
+        python3 .github/utils/change_load_path.py build/src/xrt/targets/openxr/Debug/libopenxr_monado.dylib dest/
+        install_name_tool -change @{rpath,loader_path}/xrt-external-syphon.framework/Versions/A/xrt-external-syphon dest/libopenxr_monado.dylib
+    - run: tar cf build-${{ runner.arch }}.tar -C dest .
     - uses: actions/upload-artifact@v7
       with:
         name: build-${{ runner.arch }}
-        path: dest/*.*
+        path: build-${{ runner.arch }}.tar
+        if-no-files-found: error
   merge:
     needs: build
     runs-on: macos-26
@@ -35,10 +41,16 @@ jobs:
         sparse-checkout: .github/
     - uses: actions/download-artifact@v8
       with:
-        path: dest
         pattern: build-*
+    - run: |
+        for file in build-*/*.tar; do
+          mkdir -p "dest/$(basename "$file")"
+          tar xzf "$file" -C "dest/$(basename "$file")"
+        done
     - run: mkdir merged && python3 .github/utils/merge_binaries.py dest/ merged/
+    - run: tar cf merged.tar -C merged .
     - uses: actions/upload-artifact@v7
       with:
         name: merged
-        path: merged/*.*
+        path: merged.tar
+        if-no-files-found: error
