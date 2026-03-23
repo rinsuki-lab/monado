@@ -6,6 +6,7 @@
 struct comp_window_macos_syphon
 {
     struct comp_target_swapchain base;
+	struct os_thread_helper oth;
     SyphonMetalServer* syphon_server;
 };
 
@@ -77,6 +78,7 @@ static VkResult comp_window_macos_syphon_present(
     int64_t present_slop_ns
 )
 {
+    vk_queue_lock(present_queue);
     struct comp_window_macos_syphon *cwm = (struct comp_window_macos_syphon *)ct;
     struct vk_bundle* vk = cwm->base.base.c->nr.vk;
 
@@ -118,8 +120,9 @@ static VkResult comp_window_macos_syphon_present(
     id<MTLCommandBuffer> commandBuffer = [exportCommandQueueInfo.mtlCommandQueue commandBuffer];
     [cwm->syphon_server publishFrameTexture:texture onCommandBuffer:commandBuffer imageRegion:NSMakeRect(0, 0, texture.width, texture.height) flipped:false];
     [commandBuffer commit];
-    [commandBuffer release];
 
+    vk_queue_unlock(present_queue);
+    
     return VK_SUCCESS;
 }
 
@@ -127,10 +130,25 @@ static void comp_window_macos_syphon_flush(struct comp_target *ct)
 {
 }
 
+static void comp_window_macos_syphon_destroy(struct comp_target *ct)
+{
+    struct comp_window_macos_syphon *cwm = (struct comp_window_macos_syphon *)ct;
+    if (cwm->syphon_server != nil) {
+        [cwm->syphon_server stop];
+        [cwm->syphon_server release];
+        cwm->syphon_server = nil;
+    }
+}
+
 struct comp_target *
 comp_window_macos_syphon_create(struct comp_compositor *c)
 {
     struct comp_window_macos_syphon *w = U_TYPED_CALLOC(struct comp_window_macos_syphon);
+	if (os_thread_helper_init(&w->oth) != 0) { // we don't really need thread (at this time), but crash without this
+		COMP_ERROR(c, "Failed to init thread");
+		free(w);
+		return NULL;
+	}
 
     comp_target_swapchain_init_and_set_fnptrs(&w->base, COMP_TARGET_FORCE_FAKE_DISPLAY_TIMING);
 
@@ -145,6 +163,7 @@ comp_window_macos_syphon_create(struct comp_compositor *c)
     // w->base.base.create_images = comp_window_macos_syphon_create_images;
     w->base.base.present = comp_window_macos_syphon_present;
     w->base.base.flush = comp_window_macos_syphon_flush;
+    w->base.base.destroy = comp_window_macos_syphon_destroy;
 
     uint64_t now_ns = os_monotonic_get_ns();
     u_pc_fake_create(c->settings.nominal_frame_interval_ns, now_ns, &w->base.upc);
