@@ -802,6 +802,9 @@ const struct comp_target_factory *ctfs[] = {
 #ifdef XRT_OS_WINDOWS
     &comp_target_factory_mswin,
 #endif
+#ifdef XRT_OS_OSX
+    &comp_target_factory_macos_syphon,
+#endif
 #ifdef VK_USE_PLATFORM_XLIB_XRANDR_EXT
     &comp_target_factory_direct_nvidia,
 #endif

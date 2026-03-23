@@ -138,6 +138,19 @@ comp_window_mswin_create(struct comp_compositor *c);
 extern const struct comp_target_factory comp_target_factory_mswin;
 #endif // XRT_OS_WINDOWS
 
+#ifdef XRT_OS_OSX
+/*!
+ * Create a Syphon server on macOS.
+ *
+ * @ingroup comp_main
+ * @public @memberof comp_window_macos_syphon
+ */
+struct comp_target *
+comp_window_macos_syphon_create(struct comp_compositor *c);
+
+extern const struct comp_target_factory comp_target_factory_macos_syphon;
+#endif // XRT_OS_OSX
+
 #ifdef __cplusplus
 }
 #endif

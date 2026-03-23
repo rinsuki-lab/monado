@@ -286,6 +286,8 @@ def get_instance_cmds():
         Cmd("vkCreateDebugUtilsMessengerEXT", requires=("VK_EXT_debug_utils",)),
         Cmd("vkSubmitDebugUtilsMessageEXT", requires=("VK_EXT_debug_utils",)),
         Cmd("vkDestroyDebugUtilsMessengerEXT", requires=("VK_EXT_debug_utils",)),
+        None,
+        Cmd("vkCreateHeadlessSurfaceEXT", requires=("VK_EXT_headless_surface",)),
     ]
 
 
