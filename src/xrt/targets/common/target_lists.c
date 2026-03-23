@@ -246,7 +246,7 @@ xrt_auto_prober_create_func_t target_auto_list[] = {
 #endif
 
 #ifdef XRT_BUILD_DRIVER_FXRCLIENT
-    fxrclient_create_auto_prober,
+//     fxrclient_create_auto_prober,
 #endif
 
 #ifdef XRT_BUILD_DRIVER_ARDUINO
