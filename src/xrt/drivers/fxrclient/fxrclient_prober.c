@@ -35,7 +35,11 @@ fxrclient_prober_autoprobe(struct xrt_auto_prober *xap,
 			   struct xrt_prober *xp,
 			   struct xrt_device **out_xdevs)
 {
-	return 0; // TODO
+	if (no_hmds) {
+		return 0;
+	}
+	out_xdevs[0] = fxrclient_hmd_create();
+	return 1;
 }
 
 struct xrt_auto_prober *

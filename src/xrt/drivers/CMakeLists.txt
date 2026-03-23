@@ -640,6 +640,7 @@ if (XRT_BUILD_DRIVER_FXRCLIENT)
 		drv_fxrclient STATIC
 		fxrclient/fxrclient.h
 		fxrclient/fxrclient_prober.c
+		fxrclient/fxrclient.c
 		)
 	target_link_libraries(drv_fxrclient PRIVATE xrt-interfaces aux_util)
 	list(APPEND ENABLED_HEADSET_DRIVERS fxrclient)
