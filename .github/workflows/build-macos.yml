@@ -1,0 +1,25 @@
+name: Build for macOS
+
+on:
+  push:
+    branches: [ feature/fruity_v2 ]
+  pull_request:
+    branches: [ feature/fruity_v2 ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - { image_suffix: "" } # arm64
+          - { image_suffix: "-intel" } # x86_64
+    runs-on: macos-26${{ matrix.image_suffix }}
+    steps:
+    - uses: actions/checkout@v6
+    - run: brew install eigen@3 pkg-config cmake vulkan-loader glslang && brew link --force eigen@3
+    - run: cmake -B build -DXRT_FEATURE_SERVICE=OFF -DXRT_MODULE_IPC=OFF .
+    - run: cmake --build build
+    - uses: actions/upload-artifact@v7
+      with:
+        name: build-${{ runner.arch }}
+        path: build/src/xrt/targets/openxr/libopenxr_monado.dylib
