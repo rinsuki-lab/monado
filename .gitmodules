@@ -1,0 +1,3 @@
+[submodule "src/external/syphon/src"]
+	path = src/external/syphon/Syphon
+	url = https://github.com/Syphon/Syphon-Framework

@@ -164,3 +164,20 @@ add_library(xrt-external-vdf INTERFACE)
 target_include_directories(
 	xrt-external-vdf SYSTEM INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/valve-file-vdf
 	)
+
+# Syphon
+if(APPLE)
+	add_library(
+		xrt-external-syphon SHARED
+		syphon/Syphon/Syphon.h syphon/Syphon/SyphonCFMessageReceiver.h syphon/Syphon/SyphonCFMessageSender.h syphon/Syphon/SyphonCGL.h syphon/Syphon/SyphonClient.h syphon/Syphon/SyphonClientBase.h syphon/Syphon/SyphonClientConnectionManager.h syphon/Syphon/SyphonDispatch.h syphon/Syphon/SyphonGLShader.h syphon/Syphon/SyphonGLVertices.h syphon/Syphon/SyphonImage.h syphon/Syphon/SyphonImageBase.h syphon/Syphon/SyphonIOSurfaceImageCore.h syphon/Syphon/SyphonIOSurfaceImageLegacy.h syphon/Syphon/SyphonMessageQueue.h syphon/Syphon/SyphonMessageReceiver.h syphon/Syphon/SyphonMessageSender.h syphon/Syphon/SyphonMessaging.h syphon/Syphon/SyphonMetalClient.h syphon/Syphon/SyphonMetalServer.h syphon/Syphon/SyphonOpenGLClient.h syphon/Syphon/SyphonOpenGLFunctions.h syphon/Syphon/SyphonOpenGLImage.h syphon/Syphon/SyphonOpenGLServer.h syphon/Syphon/SyphonPrivate.h syphon/Syphon/SyphonServer.h syphon/Syphon/SyphonServerBase.h syphon/Syphon/SyphonServerConnectionManager.h syphon/Syphon/SyphonServerDirectory.h syphon/Syphon/SyphonServerGLShader.h syphon/Syphon/SyphonServerGLVertices.h syphon/Syphon/SyphonServerMetalTypes.h syphon/Syphon/SyphonServerRendererCoreGL.h syphon/Syphon/SyphonServerRendererGL.h syphon/Syphon/SyphonServerRendererLegacyGL.h syphon/Syphon/SyphonServerRendererMetal.h syphon/Syphon/SyphonSubclassing.h syphon/Syphon/SyphonCFMessageReceiver.m syphon/Syphon/SyphonCFMessageSender.m syphon/Syphon/SyphonClient.m syphon/Syphon/SyphonClientBase.m syphon/Syphon/SyphonClientConnectionManager.m syphon/Syphon/SyphonGLShader.m syphon/Syphon/SyphonGLVertices.m syphon/Syphon/SyphonImage.m syphon/Syphon/SyphonImageBase.m syphon/Syphon/SyphonIOSurfaceImageCore.m syphon/Syphon/SyphonIOSurfaceImageLegacy.m syphon/Syphon/SyphonMessageQueue.m syphon/Syphon/SyphonMessageReceiver.m syphon/Syphon/SyphonMessageSender.m syphon/Syphon/SyphonMessaging.m syphon/Syphon/SyphonMetalClient.m syphon/Syphon/SyphonMetalServer.m syphon/Syphon/SyphonOpenGLClient.m syphon/Syphon/SyphonOpenGLImage.m syphon/Syphon/SyphonOpenGLServer.m syphon/Syphon/SyphonPrivate.m syphon/Syphon/SyphonServer.m syphon/Syphon/SyphonServerBase.m syphon/Syphon/SyphonServerConnectionManager.m syphon/Syphon/SyphonServerDirectory.m syphon/Syphon/SyphonServerGLShader.m syphon/Syphon/SyphonServerGLVertices.m syphon/Syphon/SyphonServerRendererCoreGL.m syphon/Syphon/SyphonServerRendererGL.m syphon/Syphon/SyphonServerRendererLegacyGL.m syphon/Syphon/SyphonServerRendererMetal.m syphon/Syphon/SyphonCGL.c syphon/Syphon/SyphonDispatch.c syphon/Syphon/SyphonOpenGLFunctions.c
+		syphon/Syphon/SyphonMetalShaders.metal
+	)
+	set_source_files_properties(syphon/Syphon/SyphonMetalShaders.metal PROPERTIES LANGUAGE METAL)
+	set_target_properties(xrt-external-syphon PROPERTIES
+		FRAMEWORK TRUE
+	)
+	target_compile_options(xrt-external-syphon PRIVATE "-fobjc-arc") # TODO: probably better to use ARC on everywhere?
+	target_precompile_headers(xrt-external-syphon PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/syphon/Syphon/Syphon_Prefix.pch)
+	target_include_directories(xrt-external-syphon PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/syphon)
+	target_link_libraries(xrt-external-syphon PRIVATE "-framework Foundation" "-framework AppKit" "-framework IOSurface" "-framework OpenGL" "-framework Metal")
+endif()
