@@ -19,7 +19,10 @@ jobs:
     - run: brew install eigen@3 pkg-config cmake vulkan-loader glslang && brew link --force eigen@3
     - run: cmake -B build -DXRT_FEATURE_SERVICE=OFF -DXRT_MODULE_IPC=OFF .
     - run: cmake --build build
+    - run: |
+        mkdir -p dest
+        python3 .github/utils/change_load_path.py build/src/xrt/targets/openxr/libopenxr_monado.dylib dest/
     - uses: actions/upload-artifact@v7
       with:
         name: build-${{ runner.arch }}
-        path: build/src/xrt/targets/openxr/libopenxr_monado.dylib
+        path: dest/*.*
