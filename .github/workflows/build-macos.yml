@@ -26,3 +26,19 @@ jobs:
       with:
         name: build-${{ runner.arch }}
         path: dest/*.*
+  merge:
+    needs: build
+    runs-on: macos-26
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        sparse-checkout: .github/
+    - uses: actions/download-artifact@v8
+      with:
+        path: dest
+        pattern: build-*
+    - run: mkdir merged && python3 .github/utils/merge_binaries.py dest/ merged/
+    - uses: actions/upload-artifact@v7
+      with:
+        name: merged
+        path: merged/*.*
