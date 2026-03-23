@@ -635,6 +635,16 @@ if(XRT_BUILD_DRIVER_SOLARXR)
 	list(APPEND ENABLED_DRIVERS solarxr)
 endif()
 
+if (XRT_BUILD_DRIVER_FXRCLIENT)
+	add_library(
+		drv_fxrclient STATIC
+		fxrclient/fxrclient.h
+		fxrclient/fxrclient_prober.c
+		)
+	target_link_libraries(drv_fxrclient PRIVATE xrt-interfaces aux_util)
+	list(APPEND ENABLED_HEADSET_DRIVERS fxrclient)
+endif()
+
 if(XRT_BUILD_SAMPLES)
 	# We build the sample driver to make sure it stays valid,
 	# but it never gets linked into a final target.

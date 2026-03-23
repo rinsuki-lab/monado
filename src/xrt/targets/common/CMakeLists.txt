@@ -229,6 +229,10 @@ if(XRT_BUILD_DRIVER_SOLARXR)
 	target_link_libraries(target_lists PRIVATE drv_solarxr)
 endif()
 
+if (XRT_BUILD_DRIVER_FXRCLIENT)
+	target_link_libraries(target_lists PRIVATE drv_fxrclient)
+endif()
+
 ####
 # Instance
 #

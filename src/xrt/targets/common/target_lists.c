@@ -111,6 +111,9 @@
 #endif
 #endif
 
+#ifdef XRT_BUILD_DRIVER_FXRCLIENT
+#include "fxrclient/fxrclient.h"
+#endif
 
 /*!
  * Builders
@@ -240,6 +243,10 @@ struct xrt_prober_entry *target_entry_lists[] = {
 xrt_auto_prober_create_func_t target_auto_list[] = {
 #ifdef XRT_BUILD_DRIVER_PSVR
     psvr_create_auto_prober,
+#endif
+
+#ifdef XRT_BUILD_DRIVER_FXRCLIENT
+    fxrclient_create_auto_prober,
 #endif
 
 #ifdef XRT_BUILD_DRIVER_ARDUINO
